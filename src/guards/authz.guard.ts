@@ -37,7 +37,7 @@ export class AuthzGuard extends AuthGuard('jwt') implements CanActivate {
     // Check valid roles
     const roles = this.reflector.get(Roles, context.getHandler())
 
-    if (roles && user?.roles && !this.utilService.arraysEqual(roles, user.roles)) {
+    if (!user?.roles || (roles && !this.utilService.arraysEqual(roles, user.roles))) {
       return false
     }
 
