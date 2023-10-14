@@ -8,11 +8,7 @@ import {
 } from './interfaces/auth-module-options.interface'
 import { JwtStrategy } from './jwt.strategy'
 
-@Module({
-  imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
-  providers: [JwtStrategy],
-  exports: [PassportModule],
-})
+@Module({})
 export class AuthzModule {
   public static forRootAsync(options?: AuthModuleAsyncOptions): DynamicModule {
     return {
