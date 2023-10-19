@@ -1,6 +1,6 @@
 {
   "name": "@charliexndt/authz",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,6 +11,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "prepublish": "npm run build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -24,7 +25,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@charliexndt/common": "^1.0.0",
+    "@charliexndt/common": "^1.2.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",

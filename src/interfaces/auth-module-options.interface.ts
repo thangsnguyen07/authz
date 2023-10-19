@@ -14,4 +14,5 @@ export interface AuthModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> 
 export declare class AuthModuleOptions {
   audience?: string
   issuer?: string
+  m2mClientId?: string
 }

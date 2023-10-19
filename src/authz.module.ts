@@ -1,11 +1,10 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
 
-import { AUTH_MODULE_OPTIONS } from './constants'
-import {
-  AuthModuleAsyncOptions,
-  AuthOptionsFactory,
-} from './interfaces/auth-module-options.interface'
+import { AuthModuleAsyncOptions, AuthOptionsFactory } from '@interfaces'
+
+import { AUTH_MODULE_OPTIONS } from '@constants'
+
 import { JwtStrategy } from './jwt.strategy'
 
 @Module({})

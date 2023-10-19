@@ -24,7 +24,8 @@
       "@middlewares": ["src/middlewares"],
       "@interfaces": ["src/interfaces"],
       "@models": ["src/models"],
-      "@enums": ["src/enums"]
+      "@enums": ["src/enums"],
+      "@constants": ["src/constants"],
     }
   },
   "include": ["src/**/*"],

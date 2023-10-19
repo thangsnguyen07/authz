@@ -10,6 +10,7 @@
   "importOrder": [
     "^@(nestjs/(.*)$)|^@(nestjs$)|^@nestjs-(.*)$",
     "^express$|express/(.*)$",
+    "^@charliexndt/(.*)$",
     "^@decorators",
     "^@http",
     "^@models",
@@ -18,6 +19,7 @@
     "^@interfaces",
     "^@utils",
     "^@enum",
+    "^@constants",
     "^[./]"
   ],
   "plugins": ["@trivago/prettier-plugin-sort-imports"],

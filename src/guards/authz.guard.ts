@@ -1,19 +1,35 @@
-import { CurrentUser, RequestContext, UtilService } from '@charliexndt/common'
-import { Observable } from 'rxjs'
-
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
+import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 
-import { M2MClientId, Permissions, Roles } from '@decorators'
+import { CurrentUser, RequestContext, UtilService } from '@charliexndt/common'
+
+import { AuthModuleOptions } from '@interfaces'
+
+import {
+  AUTH_MODULE_OPTIONS,
+  M2M_CLIENT_ACCESS_DECORATOR_METADATA_KEY,
+  PERMISSIONS_DECORATOR_METADATA_KEY,
+  ROLES_DECORATOR_METADATA_KEY,
+} from '@constants'
 
 @Injectable()
 export class AuthzGuard extends AuthGuard('jwt') implements CanActivate {
-  constructor(private reflector: Reflector, private utilService: UtilService) {
+  constructor(
+    @Inject(AUTH_MODULE_OPTIONS) private authModuleOptions: AuthModuleOptions,
+    private reflector: Reflector,
+    private utilService: UtilService
+  ) {
     super()
   }
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isVerified = await super.canActivate(context)
+
+    if (!isVerified) {
+      return false
+    }
+
     const user: CurrentUser = RequestContext.currentUser()
 
     if (!user) {
@@ -21,34 +37,33 @@ export class AuthzGuard extends AuthGuard('jwt') implements CanActivate {
     }
 
     // Check auth0 m2m client id
-    const m2mClientId = this.reflector.get(M2MClientId, context.getHandler())
+    const m2mClientAccess = this.reflector.get(
+      M2M_CLIENT_ACCESS_DECORATOR_METADATA_KEY,
+      context.getHandler()
+    )
     const userClientId = user.clientId
     const isClientCredentials = user.isClientCredentials
-
-    console.log(m2mClientId, userClientId, isClientCredentials)
+    // m2m client id
+    const m2mClientId = this.authModuleOptions?.m2mClientId
 
     // If user has m2m client id, check if it matches auth0 client id
-    if (m2mClientId && m2mClientId.length > 0) {
+    if (m2mClientAccess && m2mClientId) {
       if (isClientCredentials) {
         return m2mClientId === userClientId
       }
     }
 
     // Check valid roles
-    const roles = this.reflector.get(Roles, context.getHandler())
+    const roles = this.reflector.get(ROLES_DECORATOR_METADATA_KEY, context.getHandler())
 
-    if (!user?.roles || (roles && !this.utilService.arraysEqual(roles, user.roles))) {
+    if (roles && !this.utilService.arraysEqual(roles, user?.roles)) {
       return false
     }
 
     // Check valid permissions
-    const permissions = this.reflector.get(Permissions, context.getHandler())
+    const permissions = this.reflector.get(PERMISSIONS_DECORATOR_METADATA_KEY, context.getHandler())
 
-    if (
-      permissions &&
-      user?.permissions &&
-      !this.utilService.arraysEqual(permissions, user.permissions)
-    ) {
+    if (permissions && !this.utilService.arraysEqual(permissions, user.permissions)) {
       return false
     }
 

@@ -2,7 +2,7 @@ import { config } from 'dotenv'
 
 import { NestFactory } from '@nestjs/core'
 
-import { TestModule } from './test.module'
+import { TestModule } from './test-module/test.module'
 
 config()
 

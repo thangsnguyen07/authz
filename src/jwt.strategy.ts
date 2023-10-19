@@ -4,9 +4,9 @@ import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 
-import { AUTH_MODULE_OPTIONS } from './constants'
-import { AuthModuleOptions } from './interfaces/auth-module-options.interface'
-import { JwtPayload } from './interfaces/jwt-payload'
+import { AuthModuleOptions, JwtPayload } from '@interfaces'
+
+import { AUTH_MODULE_OPTIONS } from '@constants'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
