@@ -15,4 +15,5 @@ export declare class AuthModuleOptions {
   audience?: string
   issuer?: string
   m2mClientId?: string
+  m2mClientSecret?: string
 }

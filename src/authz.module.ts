@@ -1,5 +1,8 @@
+import { HttpModule } from '@nestjs/axios'
 import { DynamicModule, Module, Provider } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
+
+import { Auth0Service } from '@services'
 
 import { AuthModuleAsyncOptions, AuthOptionsFactory } from '@interfaces'
 
@@ -7,7 +10,11 @@ import { AUTH_MODULE_OPTIONS } from '@constants'
 
 import { JwtStrategy } from './jwt.strategy'
 
-@Module({})
+@Module({
+  imports: [HttpModule],
+  providers: [Auth0Service],
+  exports: [Auth0Service],
+})
 export class AuthzModule {
   public static forRootAsync(options?: AuthModuleAsyncOptions): DynamicModule {
     return {
@@ -22,7 +29,14 @@ export class AuthzModule {
 
         this.createConnectAsyncProviders(options),
       ],
-      exports: [PassportModule, JwtStrategy],
+      exports: [
+        PassportModule,
+        JwtStrategy,
+        {
+          provide: AUTH_MODULE_OPTIONS,
+          useValue: options,
+        },
+      ],
     }
   }
 
