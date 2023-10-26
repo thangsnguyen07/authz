@@ -7,17 +7,9 @@ import { APP_GUARD } from '@nestjs/core'
 
 import { CommonModule, RequestContextMiddleware } from '@charliexndt/common'
 
-import { AUTH_MODULE_OPTIONS } from '@constants'
-
 import configuration from './configuration'
 import { TestController } from './test.controller'
 import { TestService } from './test.service'
-
-const createAuthConfig = async (configService: ConfigService) => ({
-  issuer: configService.get('auth.domain'),
-  audience: configService.get('auth.audience'),
-  m2mClientId: configService.get('auth.m2mClientId'),
-})
 
 @Module({
   imports: [
@@ -31,7 +23,12 @@ const createAuthConfig = async (configService: ConfigService) => ({
     AuthzModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: createAuthConfig,
+      useFactory: async (configService: ConfigService) => ({
+        issuer: configService.get('auth.domain'),
+        audience: configService.get('auth.audience'),
+        m2mClientId: configService.get('auth.m2mClientId'),
+        m2mClientSecret: configService.get('auth.m2mClientSecret'),
+      }),
     }),
     // --- Import Authz Module ---
 
@@ -42,11 +39,6 @@ const createAuthConfig = async (configService: ConfigService) => ({
     TestService,
 
     // --- Provide Auth Module Options ---
-    {
-      provide: AUTH_MODULE_OPTIONS,
-      inject: [ConfigService],
-      useFactory: createAuthConfig,
-    },
     {
       provide: APP_GUARD,
       useClass: AuthzGuard,
