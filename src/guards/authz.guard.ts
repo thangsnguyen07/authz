@@ -10,6 +10,7 @@ import {
   AUTH_MODULE_OPTIONS,
   M2M_CLIENT_ACCESS_DECORATOR_METADATA_KEY,
   PERMISSIONS_DECORATOR_METADATA_KEY,
+  PUBLIC_DECORATOR_METADATA_KEY,
   ROLES_DECORATOR_METADATA_KEY,
 } from '@constants'
 
@@ -24,6 +25,14 @@ export class AuthzGuard extends AuthGuard('jwt') implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Check if request is public
+    const isPublic = this.reflector.get(PUBLIC_DECORATOR_METADATA_KEY, context.getHandler())
+
+    if (isPublic) {
+      return true
+    }
+
+    // Check jwt auth
     const isVerified = await super.canActivate(context)
 
     if (!isVerified) {
