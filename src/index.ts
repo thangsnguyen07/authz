@@ -8,4 +8,6 @@ export * from './guards'
 
 export * from './interfaces'
 
-export * from './constants/constants'
+export * from './constants'
+
+export * from './services'
