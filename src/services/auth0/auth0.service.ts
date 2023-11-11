@@ -1,10 +1,10 @@
 import { HttpStatusCode } from 'axios'
-import { catchError, map } from 'rxjs'
+import { catchError, lastValueFrom, map } from 'rxjs'
 
 import { HttpService } from '@nestjs/axios'
 import { HttpException, Inject, Injectable } from '@nestjs/common'
 
-import { AuthModuleOptions, OAuthToken } from '@interfaces'
+import { AuthModuleOptions, M2MToken, OAuthToken } from '@interfaces'
 
 import { AUTH_MODULE_OPTIONS } from '@constants'
 
@@ -15,13 +15,13 @@ export class Auth0Service {
     private readonly httpService: HttpService
   ) {}
 
-  async getM2MToken() {
+  generateM2MToken(): Promise<M2MToken> {
     const authTokenEndPoint = this.authModuleOptions.issuer + 'oauth/token'
     const clientId = this.authModuleOptions.m2mClientId
     const clientSecret = this.authModuleOptions.m2mClientSecret
     const audience = this.authModuleOptions.audience
 
-    return this.httpService
+    const request = this.httpService
       .post<OAuthToken>(authTokenEndPoint, {
         client_id: clientId,
         client_secret: clientSecret,
@@ -36,12 +36,12 @@ export class Auth0Service {
             expires_in: data.expires_in,
             token_type: data.token_type,
           }
-        })
-      )
-      .pipe(
+        }),
         catchError(() => {
           throw new HttpException('Cannot generate M2M token.', HttpStatusCode.BadRequest)
         })
       )
+
+    return lastValueFrom(request)
   }
 }
